@@ -18,11 +18,9 @@ int main(int argc, char **argv) {
 			    std::size_t idx;
 			    if ((idx = line.find("up")) != std::string::npos) {
 			      auto diff = std::atoi(line.c_str() + idx + sizeof("up"));
-			      //depth -= diff;
 			      aim -= diff;
 			    } else if ((idx = line.find("down")) != std::string::npos) {
 			      auto diff = std::atoi(line.c_str() + idx + sizeof("down"));
-			      //depth += diff;
 			      aim += diff;
 			    } else if ((idx = line.find("forward")) != std::string::npos) {
 			      auto diff = std::atoi(line.c_str() + idx + sizeof("forward"));
