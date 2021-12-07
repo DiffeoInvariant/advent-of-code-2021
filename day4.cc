@@ -86,6 +86,12 @@ struct card {
 
 int main(int argc, char **argv) {
 
+  bool part_2 = false;
+  if (argc > 1) {
+    if (std::string(argv[1]).find("--part-2") != std::string::npos) {
+      part_2 = true;
+    }
+  }
   std::string draws;
   std::getline(std::cin, draws);
   std::vector<card> game;
@@ -94,29 +100,49 @@ int main(int argc, char **argv) {
     try {
       game.push_back(card::from(std::cin));
     } catch (const char *c) {
-      std::cerr << c << '\n';
       done = true;
       break;
     }
   }
   long long score = 0;
   char *tok = strtok(const_cast<char*>(draws.c_str()), ",");
+  std::vector<bool> has_won(game.size(), false);
+  int last_score = 0;
   while(tok) {
     auto val = std::atoi(tok);
-    tok = strtok(NULL, ",");
-    int max_winning_score = 0;
-    for (auto& b : game) {
-      b.mark(val);
-      int c = b.score();
-      if (c > 0) {
-	// winning board
-	max_winning_score = std::max(max_winning_score, c * val);
-      }
-    }
-    if (max_winning_score > 0) {
-      std::cout << max_winning_score << '\n';
-      return 0;
-    }
+    tok = strtok(NULL, ",");    
+    if (part_2) {
+      for (std::size_t i=0; i<game.size(); ++i) {
+	if (!has_won[i]) {
+	  game[i].mark(val);
+	  int score = game[i].score();
+	  if (score > 0) {
+	    last_score = val * score;
+	    has_won[i] = true;
+	  }
+	}
+      }	      
+	  
+    } else {
+      int max_winning_score = 0;
+      for (auto& b : game) {
+	b.mark(val);
+	int c = b.score();
+	if (c > 0) {
+	  // winning board
+	  max_winning_score = std::max(max_winning_score, c * val);
+	}
+	
+	if (max_winning_score > 0) {
+	  std::cout << max_winning_score << '\n';
+	  return 0;
+	}
+      } 
+    } // else
+  }
+  if (part_2) {
+    std::cout << last_score << '\n';
+    return 0;
   }
   return 1;
 }
